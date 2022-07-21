@@ -4,12 +4,15 @@ import {
   Box,
   useMediaQuery,
   Card,
-  Fade,
+  Modal,
+  Paper,
+  Button,
 } from "@mui/material";
 import { useState } from "react";
 
 const GamePage = () => {
   const mq450 = useMediaQuery("(max-width:450px)");
+
   const [playerO, setPlayerO] = useState({
     name: "Player O",
     value: "O",
@@ -20,9 +23,9 @@ const GamePage = () => {
     value: "X",
     game: [],
   });
-  const items = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+  const [openModal, setOpenModal] = useState(false);
   const [playerTurn, setPlayerTurn] = useState(playerO);
-
+  const items = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
   const winningConditions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -34,15 +37,16 @@ const GamePage = () => {
     [2, 4, 6],
   ];
 
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+
   const checkWinning = (item) => {
     const auxArray = item.game;
     auxArray.sort();
-    console.log(auxArray);
     for (var i = 0; i < winningConditions.length; i++) {
       if (winningConditions[i].join() === auxArray.join()) {
-        console.log(auxArray);
-        console.log(winningConditions[i]);
         console.log("----->", true);
+        return true;
       }
     }
   };
@@ -50,14 +54,14 @@ const GamePage = () => {
   const handleClick = (position) => {
     try {
       if (playerTurn.value === "O") {
-        let aux = [...playerO.game, position];
-        setPlayerO({ ...playerO, game: aux });
-        checkWinning(playerO);
+        playerO.game.push(position);
+        setPlayerO({ ...playerO });
+        if (checkWinning(playerO)) return handleOpenModal();
         setPlayerTurn(playerX);
       } else {
-        let aux = [...playerX.game, position];
-        setPlayerX({ ...playerX, game: aux });
-        checkWinning(playerX);
+        playerX.game.push(position);
+        setPlayerX({ ...playerX });
+        if (checkWinning(playerX)) return handleOpenModal();
         setPlayerTurn(playerO);
       }
     } catch (error) {
@@ -66,32 +70,52 @@ const GamePage = () => {
   };
 
   return (
-    <Container sx={{ paddingY: "1rem", minHeight: "100vh" }}>
-      <Typography variant="h2" fontWeight={800} pt="1rem" textAlign="center">
-        Lets Go!
-      </Typography>
-      <Typography
-        variant="h5"
-        fontWeight={600}
-        my="1rem"
-        textAlign="center"
-      >{`Player: ${playerTurn.value}`}</Typography>
-      <Box
-        display="grid"
-        gridTemplateColumns="repeat(3, 0fr)"
-        gap={mq450 ? 1 : 2}
-        justifyContent="center"
-      >
-        {items.map((item, i) => (
-          <IconCard
-            player={playerTurn}
-            key={item}
-            item={item}
-            onClick={handleClick}
-          />
-        ))}
-      </Box>
-    </Container>
+    <>
+      <Container sx={{ paddingY: "1rem", minHeight: "100vh" }}>
+        <Typography variant="h2" fontWeight={800} pt="1rem" textAlign="center">
+          Lets Go!
+        </Typography>
+        <Typography
+          variant="h5"
+          fontWeight={600}
+          my="1rem"
+          textAlign="center"
+        >{`Player: ${playerTurn.value}`}</Typography>
+        <Box
+          display="grid"
+          gridTemplateColumns="repeat(3, 0fr)"
+          gap={mq450 ? 1 : 2}
+          justifyContent="center"
+        >
+          {items.map((item, i) => (
+            <IconCard
+              player={playerTurn}
+              key={item}
+              item={item}
+              onClick={handleClick}
+            />
+          ))}
+        </Box>
+      </Container>
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Paper
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "300px",
+            p: "3rem",
+          }}
+        >
+          <Typography
+            textAlign="center"
+            fontWeight={600}
+            variant="h3"
+          >{`${playerTurn.name} win!`}</Typography>
+        </Paper>
+      </Modal>
+    </>
   );
 };
 
