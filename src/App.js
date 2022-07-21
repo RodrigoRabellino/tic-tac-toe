@@ -42,13 +42,8 @@ function App() {
       MuiCard: {
         styleOverrides: {
           root: {
-            backgroundColor: "#f8f9fa",
             borderRadius: "15px",
             transition: "0.4s",
-            ":hover": {
-              transition: "0.4s",
-              backgroundColor: "#e3ffe6",
-            },
           },
         },
       },
