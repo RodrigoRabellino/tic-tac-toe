@@ -6,7 +6,6 @@ import {
   Card,
   Modal,
   Paper,
-  Button,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -25,7 +24,24 @@ const GamePage = () => {
   });
   const [openModal, setOpenModal] = useState(false);
   const [playerTurn, setPlayerTurn] = useState(playerO);
-  const items = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+  const [items, setItems] = useState([
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+  ]);
+
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    window.location.reload();
+  };
+
   const winningConditions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -37,18 +53,20 @@ const GamePage = () => {
     [2, 4, 6],
   ];
 
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
-
   const checkWinning = (item) => {
     const auxArray = item.game;
     auxArray.sort();
+
     for (var i = 0; i < winningConditions.length; i++) {
-      if (winningConditions[i].join() === auxArray.join()) {
-        console.log("----->", true);
+      if (
+        winningConditions[i].join() === auxArray.slice(0, 3).join() ||
+        winningConditions[i].join() === auxArray.slice(1, 4).join() ||
+        winningConditions[i].join() === auxArray.join()
+      ) {
         return true;
       }
     }
+    return false;
   };
 
   const handleClick = (position) => {
