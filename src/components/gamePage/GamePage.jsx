@@ -6,11 +6,14 @@ import {
   Card,
   Modal,
   Paper,
+  CircularProgress,
+  Button,
 } from "@mui/material";
 import { useState } from "react";
 
-const GamePage = () => {
+const GamePage = ({ endGame, gameSelected }) => {
   const mq450 = useMediaQuery("(max-width:450px)");
+  const [thinking, setThinking] = useState(false);
 
   const [playerO, setPlayerO] = useState({
     name: "Player O",
@@ -39,7 +42,7 @@ const GamePage = () => {
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => {
     setOpenModal(false);
-    window.location.reload();
+    endGame();
   };
 
   const winningConditions = [
@@ -60,13 +63,20 @@ const GamePage = () => {
     for (var i = 0; i < winningConditions.length; i++) {
       if (
         winningConditions[i].join() === auxArray.slice(0, 3).join() ||
-        winningConditions[i].join() === auxArray.slice(1, 4).join() ||
-        winningConditions[i].join() === auxArray.join()
+        winningConditions[i].join() === auxArray.join() ||
+        winningConditions[i].join() === auxArray.slice(1, 4).join()
       ) {
         return true;
       }
     }
     return false;
+  };
+
+  const pcTurn = () => {
+    setThinking(true);
+    setTimeout(() => {
+      setThinking(false);
+    }, 1000);
   };
 
   const handleClick = (position) => {
@@ -89,21 +99,30 @@ const GamePage = () => {
 
   return (
     <>
-      <Container sx={{ paddingY: "1rem", minHeight: "100vh" }}>
+      <Container
+        sx={{
+          paddingY: "1rem",
+          minHeight: "100vh",
+        }}
+      >
         <Typography variant="h2" fontWeight={800} pt="1rem" textAlign="center">
           Lets Go!
         </Typography>
-        <Typography
-          variant="h5"
-          fontWeight={600}
-          my="1rem"
-          textAlign="center"
-        >{`Player: ${playerTurn.value}`}</Typography>
+        <Box display="flex" justifyContent="space-evenly" alignItems="center">
+          <Typography
+            variant="h5"
+            fontWeight={600}
+            my="1rem"
+          >{`Player: ${playerTurn.value}`}</Typography>
+          {thinking ? <CircularProgress /> : <Box></Box>}
+        </Box>
+
         <Box
           display="grid"
           gridTemplateColumns="repeat(3, 0fr)"
           gap={mq450 ? 1 : 2}
           justifyContent="center"
+          sx={{ PointerEvents: thinking ? "none" : "" }}
         >
           {items.map((item, i) => (
             <IconCard
@@ -113,6 +132,23 @@ const GamePage = () => {
               onClick={handleClick}
             />
           ))}
+        </Box>
+        <Box
+          onClick={endGame}
+          sx={{
+            mt: "3rem",
+            p: "3rem",
+            width: "fit-content",
+            borderRadius: "15px",
+            padding: "1rem",
+            cursor: "pointer",
+            backgroundColor: "#eaeaea",
+            fontWeight: "600",
+            WebkitBoxShadow: "12px 12px 24px #c7c7c7, -12px -12px 24px #ffffff",
+            boxShadow: "12px 12px 24px #c7c7c7, -12px -12px 24px #ffffff",
+          }}
+        >
+          Go Back
         </Box>
       </Container>
       <Modal open={openModal} onClose={handleCloseModal}>

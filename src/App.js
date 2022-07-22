@@ -1,6 +1,6 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./App.css";
-import GamePage from "./components/gamePage/GamePage";
+import MainPage from "./components/mainPage/MainPage";
 
 function App() {
   const myTheme = createTheme({
@@ -60,7 +60,7 @@ function App() {
   return (
     <ThemeProvider theme={myTheme}>
       <div className="App">
-        <GamePage />
+        <MainPage />
       </div>
     </ThemeProvider>
   );
