@@ -7,7 +7,6 @@ import {
   Modal,
   Paper,
   CircularProgress,
-  Button,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -19,11 +18,13 @@ const GamePage = ({ endGame, gameSelected }) => {
     name: "Player O",
     value: "O",
     game: [],
+    user: "user",
   });
   const [playerX, setPlayerX] = useState({
     name: "Player X",
     value: "X",
     game: [],
+    user: gameSelected === "1vsPC" ? "pc" : "user",
   });
   const [openModal, setOpenModal] = useState(false);
   const [playerTurn, setPlayerTurn] = useState(playerO);
@@ -74,8 +75,32 @@ const GamePage = ({ endGame, gameSelected }) => {
 
   const pcTurn = () => {
     setThinking(true);
+    let flag = true;
+    let gridItem = {};
+    const itemsSelected = [...playerO.game, ...playerX.game];
+    let counter = 0;
+
+    while (flag) {
+      if (counter <= 8) {
+        counter++;
+      } else {
+        flag = false;
+        break;
+      }
+      let randomNum = Math.floor(Math.random() * (9 - 1) + 1) - 1;
+      if (!itemsSelected.includes(randomNum.toString())) {
+        console.log("randomNum", randomNum);
+        gridItem = document.getElementById(randomNum);
+        flag = false;
+      }
+    }
     setTimeout(() => {
+      if (Object.entries(gridItem).length !== 0) {
+        setThinking(false);
+        return gridItem.click();
+      }
       setThinking(false);
+      handleOpenModal();
     }, 1000);
   };
 
@@ -85,6 +110,7 @@ const GamePage = ({ endGame, gameSelected }) => {
         playerO.game.push(position);
         setPlayerO({ ...playerO });
         if (checkWinning(playerO)) return handleOpenModal();
+        if (gameSelected === "1vsPC") pcTurn();
         setPlayerTurn(playerX);
       } else {
         playerX.game.push(position);
@@ -154,12 +180,17 @@ const GamePage = ({ endGame, gameSelected }) => {
       <Modal open={openModal} onClose={handleCloseModal}>
         <Paper
           sx={{
+            transition: "0.4s",
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: "300px",
             p: "3rem",
+            ":hover": {
+              transition: "0.4s",
+              opacity: "0.5",
+            },
           }}
         >
           <Typography
@@ -209,7 +240,7 @@ const IconCard = ({ player, onClick, item }) => {
 
   return (
     <Box gridColumn="span 1">
-      <Card elevation={0} sx={cardStyles} onClick={handleClick}>
+      <Card elevation={0} sx={cardStyles} onClick={handleClick} id={item}>
         {Object.entries(playerSelect).length === 0 ? (
           <Typography
             fontWeight={800}

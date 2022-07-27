@@ -1,12 +1,5 @@
 import { LinkedIn, Language, GitHub } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Fade,
-  Typography,
-  useMediaQuery,
-  Zoom,
-} from "@mui/material";
+import { Box, Fade, Typography, useMediaQuery } from "@mui/material";
 import { Container } from "@mui/system";
 import { useState } from "react";
 import GamePage from "../gamePage/GamePage";
@@ -135,8 +128,7 @@ const MyButton = ({ gameType, onClick }) => {
   const handleClick = () => {
     setLoading(true);
     setTimeout(() => {
-      if (gameType.replace(/ /g, "") === "1vs1")
-        onClick(gameType.replace(/ /g, ""));
+      onClick(gameType.replace(/ /g, ""));
       setLoading(false);
     }, 400);
   };
